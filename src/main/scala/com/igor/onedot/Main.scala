@@ -19,7 +19,7 @@ object Main {
   }
 
   private def execPipeline(): Unit = {
-    val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car1.json")
+    val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car.json")
     val normalisation    = new Normalisation
     val extraction       = new Extraction
     val integration      = new Integration
