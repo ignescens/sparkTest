@@ -13,7 +13,7 @@ In the test folder a spec which covers main cases for each step.
 From `sbt` console `run`
 
 ## How it works
-<img title="data-flow" src="/Users/igor.vonlemberg/work/onedot/onedot_pipeline.drawio.png">
+<img title="data-flow" src="/onedot_pipeline.drawio.png">
 
 ## 5) Product matching, enriching existing products, adding new products
 ```
