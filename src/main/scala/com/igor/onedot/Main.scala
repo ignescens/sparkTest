@@ -1,14 +1,22 @@
 package com.igor.onedot
 
-
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{AnalysisException, SparkSession}
 
 
 object Main {
+  implicit val spark: SparkSession = SessionHelper.build("onedot-supplier-processing")
+
   def main(args: Array[String]): Unit = {
+    try {
+      execPipeline()
+    } catch {
+      case fileNotFound :  AnalysisException => println(s"Input file wasn't found: $fileNotFound")
+      case e : Exception => println(s"It was an error in the pipeline, please check logs: $e}")
+    }
 
-    implicit val spark: SparkSession = SessionHelper.build("onedot-supplier-processing")
+  }
 
+  private def execPipeline(): Unit = {
     val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car.json")
     val normalisation = new Normalisation
     val extraction = new Extraction
@@ -28,8 +36,6 @@ object Main {
 
     val integratedDf = extractedDf
       .transform(integration.toTargetSchema())
-
-    integratedDf.show(10)
 
     Utils.exportToCsv(preProcessedDf, "output/pre-processed")
     Utils.exportToCsv(normalizedDf, "output/normalized")

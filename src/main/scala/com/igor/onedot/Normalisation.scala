@@ -1,8 +1,8 @@
 package com.igor.onedot
 
 import com.igor.onedot.Normalisation._
-import org.apache.spark.sql.functions.{coalesce, initcap, lit, split, typedLit, when}
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{ColumnName, DataFrame, SparkSession}
 
 /*
 2) Normalisation
@@ -21,12 +21,17 @@ class Normalisation(implicit val spark: SparkSession) {
 
   import spark.implicits._
 
+  /*
+  we have 3 cases here:
+    1) when name consist of two words without space and initcap won't work. e.g. Mercedes-Benz
+    2) when name should be upper case
+    3) when first letter of each word should be in upper case
+   */
   def normalizeMake()(df: DataFrame): DataFrame = {
     df
       .withColumn("MakeText",
-        when($"makeText".contains("-"), $"makeText")
-          when($"makeText".contains("-"), $"makeText") // do something that ROLLS-ROYCE will be Rolls-Royce doesn't work: split("-").map(_.toLowerCase).map(_.capitalize).mkString("-"))
-          when($"makeText".isin(CarNamesExceptions: _*), $"makeText")
+        when($"makeText".contains("-"), doubleName($"makeText"))
+          when($"makeText".isin(CarNamesExceptions: _*), upper($"makeText"))
           otherwise initcap($"makeText")
       )
   }
@@ -36,6 +41,14 @@ class Normalisation(implicit val spark: SparkSession) {
     df
       .withColumn("BodyColorText", split($"BodyColorText", " ").getItem(0))
       .withColumn("BodyColorText", coalesce(ColorsColumn($"BodyColorText"), lit("Other")))
+  }
+
+  private def doubleName(col: ColumnName) = {
+    translate(
+      initcap(
+        translate(col, "-", " ")
+      ),
+      " ", "-")
   }
 
 }
