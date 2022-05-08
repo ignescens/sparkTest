@@ -9,5 +9,4 @@ object Utils {
       .option("header", "true")
       .mode(SaveMode.Overwrite)
       .csv(outputPath)
-
 }

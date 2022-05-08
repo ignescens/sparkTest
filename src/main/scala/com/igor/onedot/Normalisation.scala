@@ -30,9 +30,9 @@ class Normalisation(implicit val spark: SparkSession) {
   def normalizeMake()(df: DataFrame): DataFrame = {
     df.withColumn(
       "MakeText",
-      when($"makeText".contains("-"), doubleName($"makeText"))
-        when ($"makeText".isin(CarNamesExceptions: _*), upper($"makeText"))
-        otherwise initcap($"makeText")
+      when($"MakeText".contains("-"), doubleName($"MakeText"))
+        when ($"MakeText".isin(CarNamesExceptions: _*), upper($"MakeText"))
+        otherwise initcap($"MakeText")
     )
   }
 

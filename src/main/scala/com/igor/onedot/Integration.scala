@@ -19,8 +19,6 @@ Please integrate the dataset using at least the 5 attributes mapping as follows:
 
 class Integration(implicit val spark: SparkSession) {
 
-  import spark.implicits._
-
   def toTargetSchema()(df: DataFrame): DataFrame = {
     ColumnsToRename
       .foldLeft(df) {

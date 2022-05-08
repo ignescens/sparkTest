@@ -1,22 +1,25 @@
 package com.igor.onedot
 
 import org.apache.spark.sql.{AnalysisException, SparkSession}
+import org.slf4j.LoggerFactory
 
 object Main {
   implicit val spark: SparkSession = SessionHelper.build("onedot-supplier-processing")
+
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     try {
       execPipeline()
     } catch {
-      case fileNotFound: AnalysisException => println(s"Input file wasn't found: $fileNotFound")
-      case e: Exception                    => println(s"It was an error in the pipeline, please check logs: $e}")
+      case fileNotFound: AnalysisException => logger.error(s"Input file wasn't found: $fileNotFound")
+      case e: Exception                    => logger.error(s"It was an error in the pipeline, please check logs: $e}")
     }
 
   }
 
   private def execPipeline(): Unit = {
-    val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car.json")
+    val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car1.json")
     val normalisation    = new Normalisation
     val extraction       = new Extraction
     val integration      = new Integration
