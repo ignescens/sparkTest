@@ -12,17 +12,16 @@ Be aware of character encodings when processing the data.
 
 class LoadSupplierData(path: String)(implicit val spark: SparkSession) {
 
-  def fromJson: DataFrame = spark.read
-    .option("encoding", "UTF-8")
-    .json(path)
-    .withColumnRenamed("entity_id", "entityId")
-    .withColumnRenamed("Attribute Values", "attributeValues")
-    .withColumnRenamed("Attribute Names", "attributeNames")
-
+  def fromJson: DataFrame =
+    spark.read
+      .option("encoding", "UTF-8")
+      .json(path)
+      .withColumnRenamed("entity_id", "entityId")
+      .withColumnRenamed("Attribute Values", "attributeValues")
+      .withColumnRenamed("Attribute Names", "attributeNames")
 
   def preProcessDf()(df: DataFrame): DataFrame =
-    df
-      .groupBy("ID", "MakeText", "ModelText", "ModelTypeText", "TypeName", "TypeNameFull")
+    df.groupBy("ID", "MakeText", "ModelText", "ModelTypeText", "TypeName", "TypeNameFull")
       .pivot("attributeNames")
       .agg(first("attributeValues"))
 }

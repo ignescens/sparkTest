@@ -2,7 +2,6 @@ package com.igor.onedot
 
 import org.apache.spark.sql.{AnalysisException, SparkSession}
 
-
 object Main {
   implicit val spark: SparkSession = SessionHelper.build("onedot-supplier-processing")
 
@@ -10,17 +9,17 @@ object Main {
     try {
       execPipeline()
     } catch {
-      case fileNotFound :  AnalysisException => println(s"Input file wasn't found: $fileNotFound")
-      case e : Exception => println(s"It was an error in the pipeline, please check logs: $e}")
+      case fileNotFound: AnalysisException => println(s"Input file wasn't found: $fileNotFound")
+      case e: Exception                    => println(s"It was an error in the pipeline, please check logs: $e}")
     }
 
   }
 
   private def execPipeline(): Unit = {
     val loadSupplierData = new LoadSupplierData("src/main/resources/supplier_car.json")
-    val normalisation = new Normalisation
-    val extraction = new Extraction
-    val integration = new Integration
+    val normalisation    = new Normalisation
+    val extraction       = new Extraction
+    val integration      = new Integration
 
     val initialDf = loadSupplierData.fromJson
 

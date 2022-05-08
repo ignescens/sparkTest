@@ -15,8 +15,7 @@ class Extraction(implicit val spark: SparkSession) {
   import spark.implicits._
 
   def consumptionData()(df: DataFrame): DataFrame = {
-    df
-      .withColumn("extracted-value-ConsumptionTotalText", split($"ConsumptionTotalText", " ").getItem(0))
+    df.withColumn("extracted-value-ConsumptionTotalText", split($"ConsumptionTotalText", " ").getItem(0))
       .withColumn("extracted-unit-ConsumptionTotalText", split($"ConsumptionTotalText", " ").getItem(1))
   }
 

@@ -28,18 +28,17 @@ class Normalisation(implicit val spark: SparkSession) {
     3) when first letter of each word should be in upper case
    */
   def normalizeMake()(df: DataFrame): DataFrame = {
-    df
-      .withColumn("MakeText",
-        when($"makeText".contains("-"), doubleName($"makeText"))
-          when($"makeText".isin(CarNamesExceptions: _*), upper($"makeText"))
-          otherwise initcap($"makeText")
-      )
+    df.withColumn(
+      "MakeText",
+      when($"makeText".contains("-"), doubleName($"makeText"))
+        when ($"makeText".isin(CarNamesExceptions: _*), upper($"makeText"))
+        otherwise initcap($"makeText")
+    )
   }
 
   // colors like  rot mét. will be treated like rot/Red etc
   def normalizeColor()(df: DataFrame): DataFrame = {
-    df
-      .withColumn("BodyColorText", split($"BodyColorText", " ").getItem(0))
+    df.withColumn("BodyColorText", split($"BodyColorText", " ").getItem(0))
       .withColumn("BodyColorText", coalesce(ColorsColumn($"BodyColorText"), lit("Other")))
   }
 
@@ -48,26 +47,30 @@ class Normalisation(implicit val spark: SparkSession) {
       initcap(
         translate(col, "-", " ")
       ),
-      " ", "-")
+      " ",
+      "-"
+    )
   }
 
 }
 
 object Normalisation {
   private final val CarNamesExceptions = Seq("BMW", "AGM", "VW", "MG")
-  private final val ColorsColumn = typedLit(Map(
-    "beige" -> "Beige",
-    "schwarz" -> "Black",
-    "blau" -> "Blue",
-    "braun" -> "Brown",
-    "gold" -> "Gold",
-    "grau" -> "Grey",
-    "grün" -> "Green",
-    "orange" -> "Orange",
-    "violett" -> "Purple",
-    "rot" -> "Red",
-    "silber" -> "Silver",
-    "weiss" -> "White",
-    "gelb" -> "Yellow"
-  ))
+  private final val ColorsColumn = typedLit(
+    Map(
+      "beige"   -> "Beige",
+      "schwarz" -> "Black",
+      "blau"    -> "Blue",
+      "braun"   -> "Brown",
+      "gold"    -> "Gold",
+      "grau"    -> "Grey",
+      "grün"    -> "Green",
+      "orange"  -> "Orange",
+      "violett" -> "Purple",
+      "rot"     -> "Red",
+      "silber"  -> "Silver",
+      "weiss"   -> "White",
+      "gelb"    -> "Yellow"
+    )
+  )
 }

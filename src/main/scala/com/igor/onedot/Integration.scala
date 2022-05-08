@@ -22,9 +22,10 @@ class Integration(implicit val spark: SparkSession) {
   import spark.implicits._
 
   def toTargetSchema()(df: DataFrame): DataFrame = {
-    ColumnsToRename.foldLeft(df) {
-      case (df, (supplierName, targetName)) => df.withColumnRenamed(supplierName, targetName)
-    }
+    ColumnsToRename
+      .foldLeft(df) {
+        case (df, (supplierName, targetName)) => df.withColumnRenamed(supplierName, targetName)
+      }
       .drop(ColumnsToDrop: _*)
   }
 
@@ -34,11 +35,11 @@ object Integration {
 
   private final val ColumnsToRename = Map(
     "BodyColorText" -> "color",
-    "MakeText" -> "make",
-    "ModelText" -> "model",
-    "TypeName" -> "model_variant",
-    "City" -> "city",
-    "BodyTypeText" -> "carType",
+    "MakeText"      -> "make",
+    "ModelText"     -> "model",
+    "TypeName"      -> "model_variant",
+    "City"          -> "city",
+    "BodyTypeText"  -> "carType"
   )
   private final val ColumnsToDrop = Seq("ID", "TypeNameFull", "ConditionTypeText", "Hp", "InteriorColorText", "ConsumptionTotalText")
 
