@@ -27,7 +27,7 @@ class Normalisation(implicit val spark: SparkSession) {
     2) when name should be upper case
     3) when first letter of each word should be in upper case
    */
-  def normalizeMake()(df: DataFrame): DataFrame = {
+  private[onedot] def normalizeMake()(df: DataFrame): DataFrame = {
     df.withColumn(
       "MakeText",
       when($"MakeText".contains("-"), doubleName($"MakeText"))
@@ -37,10 +37,14 @@ class Normalisation(implicit val spark: SparkSession) {
   }
 
   // colors like  rot mét. will be treated like rot/Red etc
-  def normalizeColor()(df: DataFrame): DataFrame = {
+  private[onedot] def normalizeColor()(df: DataFrame): DataFrame = {
     df.withColumn("BodyColorText", split($"BodyColorText", " ").getItem(0))
       .withColumn("BodyColorText", coalesce(ColorsColumn($"BodyColorText"), lit("Other")))
   }
+
+  def normalizeColorAndMake()(df: DataFrame): DataFrame =
+    df.transform(normalizeMake())
+      .transform(normalizeColor())
 
   private def doubleName(col: ColumnName) = {
     translate(

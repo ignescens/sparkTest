@@ -15,6 +15,8 @@ From `sbt` console `run`
 ## How it works
 <img title="data-flow" src="/onedot_pipeline.drawio.png">
 
+Since every step need to have a csv file after df computation `.persist()` is used to avoid re-computation when writing files
+
 ## 5) Product matching, enriching existing products, adding new products
 ```
 Product matching is to identify:
@@ -32,3 +34,5 @@ Since we don't have `id` and another columns aren't unique I'd go for combinatio
 Before adding data to `TD` more normalisation need to be done to match the format/language of the target. Some Attributes would be a default value or we can also keep `null`
 
 Challenges. Error handling, we can write a default value if something went wrong or `null`, additional we can store error info for specific row which caused a problem for manual analysis. 
+
+For more specific suggestion more information needed on how the target data is supposed to be used etc.

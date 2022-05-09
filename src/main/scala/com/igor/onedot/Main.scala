@@ -28,16 +28,19 @@ object Main {
 
     val preProcessedDf = initialDf
       .transform(loadSupplierData.preProcessDf())
+      .persist()
 
     val normalizedDf = preProcessedDf
-      .transform(normalisation.normalizeColor())
-      .transform(normalisation.normalizeMake())
+      .transform(normalisation.normalizeColorAndMake())
+      .persist()
 
     val extractedDf = normalizedDf
       .transform(extraction.consumptionData())
+      .persist()
 
     val integratedDf = extractedDf
       .transform(integration.toTargetSchema())
+      .persist()
 
     Utils.exportToCsv(preProcessedDf, "output/pre-processed")
     Utils.exportToCsv(normalizedDf, "output/normalized")
